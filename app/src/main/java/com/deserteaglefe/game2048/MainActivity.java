@@ -5,10 +5,6 @@ import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
-import android.hardware.Sensor;
-import android.hardware.SensorEvent;
-import android.hardware.SensorEventListener;
-import android.hardware.SensorManager;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -36,7 +32,7 @@ import java.util.Random;
  *          可惜当时的代码早已因为换电脑而遗失
  *          如今再写2048，却已物是人非，心情难以平静
  */
-public class MainActivity extends AppCompatActivity implements SensorEventListener {
+public class MainActivity extends AppCompatActivity {
 
     // 常量
     private static final String SCORE = "Score: ";
@@ -70,28 +66,13 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     private GestureDetector mGestureDetector;
     private int mMaxScore;
 
-    // 传感器
-    private SensorManager mSensorManager;
-    private Sensor mSensor;
-    private boolean initSensor = false;
-    private float x;
-    private float y;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         findViews();
         setListeners();
-        // setSensor(); // TODO: 取消了
         init();
-    }
-
-    private void setSensor() {
-        // (1)获取SensorManager对象
-        mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
-        // (2)获取Sensor对象
-        mSensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
     }
 
     private void findViews() {
@@ -423,7 +404,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         masks[count].setY(mBaseY + posY * defaultDelta);
         setMaskView(count, data[fromX][posY]);
         ObjectAnimator animator = ObjectAnimator.ofFloat(masks[count], "translationX", fromX * defaultDelta, toX * defaultDelta);
-        animator.setDuration(300);
+        animator.setDuration(200);
         animator.start();
         animator.addListener(mAnimatorListener);
         setBlockView(fromX * 4 + posY, 0, false);
@@ -442,7 +423,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         masks[count].setY(mBaseY);
         setMaskView(count, data[posX][fromY]);
         ObjectAnimator animator = ObjectAnimator.ofFloat(masks[count], "translationY", fromY * defaultDelta, toY * defaultDelta);
-        animator.setDuration(300);
+        animator.setDuration(200);
         animator.start();
         animator.addListener(mAnimatorListener);
         setBlockView(posX * 4 + fromY, 0, false);
@@ -482,54 +463,11 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
     @Override
     protected void onResume() {
         super.onResume();
-        initSensor = false;
-//        mSensorManager.registerListener(this, mSensor, SensorManager.SENSOR_DELAY_NORMAL);
-
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-//        mSensorManager.unregisterListener(this);
-    }
-
-    // 当传感器数据发生变化的时候
-    @Override
-    public void onSensorChanged(SensorEvent event) {
-        if (event.sensor.getType() == Sensor.TYPE_ORIENTATION) {
-            // 我们绕着y轴旋转
-            if (!initSensor) {
-                x = event.values[2];
-                y = event.values[1];
-                initSensor = true;
-            }
-            if (!isMoving) {
-                float dx = event.values[2] - x;
-                float dy = event.values[1] - y;
-
-                if (Math.abs(dx) > 9 || Math.abs(dy) > 9) {
-                    if (Math.abs(dx) * 9 > Math.abs(dy) * 16) {
-                        if (dx > 0) {
-                            moveLeft();
-                        } else {
-                            moveRight();
-                        }
-                    } else {
-                        if (dy > 0) {
-                            moveUp();
-                        } else {
-                            moveDown();
-                        }
-                    }
-                }
-                x = event.values[2];
-                y = event.values[1];
-            }
-        }
-    }
-
-    @Override
-    public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
 
     private void setListeners() {
