@@ -423,7 +423,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         masks[count].setY(mBaseY + posY * defaultDelta);
         setMaskView(count, data[fromX][posY]);
         ObjectAnimator animator = ObjectAnimator.ofFloat(masks[count], "translationX", fromX * defaultDelta, toX * defaultDelta);
-        animator.setDuration(400);
+        animator.setDuration(300);
         animator.start();
         animator.addListener(mAnimatorListener);
         setBlockView(fromX * 4 + posY, 0, false);
@@ -442,7 +442,7 @@ public class MainActivity extends AppCompatActivity implements SensorEventListen
         masks[count].setY(mBaseY);
         setMaskView(count, data[posX][fromY]);
         ObjectAnimator animator = ObjectAnimator.ofFloat(masks[count], "translationY", fromY * defaultDelta, toY * defaultDelta);
-        animator.setDuration(400);
+        animator.setDuration(300);
         animator.start();
         animator.addListener(mAnimatorListener);
         setBlockView(posX * 4 + fromY, 0, false);
